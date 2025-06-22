@@ -1,25 +1,36 @@
-// index.js
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-
 const app = express();
 
-// Middleware
+// ✅ Allow both Netlify (live) and localhost (dev)
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://eminentflix.netlify.app'
+];
+
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // allow requests with no origin (e.g., mobile apps, Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
+
 app.use(express.json());
 
 // Routes
 const movieRoutes = require('./routes/movies');
 app.use('/api/movies', movieRoutes);
+
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
-
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
