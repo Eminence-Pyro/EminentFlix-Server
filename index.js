@@ -13,7 +13,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    // allow requests with no origin (e.g., mobile apps, Postman)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -25,14 +24,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Routes
-const movieRoutes = require('./routes/movies');
-app.use('/api/movies', movieRoutes);
-
-const authRoutes = require('./routes/auth');
-app.use('/api/auth', authRoutes);
-
-// Connect to MongoDB
+// ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -40,7 +32,14 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('✅ Connected to MongoDB'))
 .catch((err) => console.error('❌ MongoDB connection error:', err));
 
-// Start server
+// ✅ Routes
+const movieRoutes = require('./routes/movies');
+const authRoutes = require('./routes/auth');
+
+app.use('/api/movies', movieRoutes);
+app.use('/api/auth', authRoutes);
+
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

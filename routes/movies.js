@@ -1,4 +1,3 @@
-// server/routes/movies.js
 const express = require('express');
 const router = express.Router();
 const FavoriteMovie = require('../models/FavoriteMovie');
